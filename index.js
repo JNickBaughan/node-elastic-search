@@ -28,32 +28,32 @@ const createIndex = async () => {
 }
 
 const setAlias = async () => {
-    debugger;
+    
     const aliasesResult = await elasticClient.cat.aliases({
         format: "json",
         name: alias
     })
-    debugger;
+    
     const indexesPointedToByAlias = aliasesResult.body.map(a => a.index);
-    debugger;
+    
     if(indexesPointedToByAlias && indexesPointedToByAlias?.length){
-        debugger;
+        
         await elasticClient.indices.deleteAlias({
             index: indexesPointedToByAlias,
             name: alias
         })
     }
-    debugger;
+    
     await elasticClient.indices.putAlias({
         index,
         name: alias
     });
-    debugger;
+    
     return true;
 }
 
 const createIndexIfNotExist = async () => {
-    debugger;
+    
     if(indexHasBeenCreated){
         return true;
     }
