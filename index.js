@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser")
 const { Client } = require("@elastic/elasticsearch")
+const data = require("./data.js")
 
 const middlewares = [
     bodyParser.json(),
@@ -70,25 +71,28 @@ const createIndexIfNotExist = async () => {
     }
 }
 
-
-
-const wrapper = () => {
-    const indexData = async () => {
-        await createIndexIfNotExist();
-        await elasticClient.index({
-            index, id: 1,
-            body: {
-                id: 1,
-                name: "nick baughan"
-            }
-        })
-    }
-
-    indexData();
+const indexData = async (data) => {
+    await createIndexIfNotExist();
+    await elasticClient.index({
+        index, 
+        id: data.id,
+        body: data
+    })
 }
 
-wrapper()
 
+app.get("/index-all", async (req, res) => {
+    const all = data.map(async d => {
+        await indexData(d);
+    });
+
+    await Promise.all(all);
+    res.send(200);
+})
+
+app.listen(5000, () => {
+    console.log(`app started on port 5000`)
+})
 
 
 
